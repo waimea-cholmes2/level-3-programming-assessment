@@ -36,15 +36,20 @@ fun main() {
  */
 class App() {
     // Constants defining any key values
-    val MAX_CLICKS = 10
+    var x = 0
 
-    // Data fields
-    var clicks = 0
+    class Location(val name: String, val description: String, ){
+        val neighbors: MutableList<Pair<String, Location>> = mutableListOf()
+    }
 
-    // Application logic functions
-    fun updateClickCount() {
-        clicks++
-        if (clicks > MAX_CLICKS) clicks = MAX_CLICKS
+    class GameMap {
+        val locations: MutableList<Location> = mutableListOf()
+        var currentLocation: Location? = null
+
+        private fun setUpMap(){
+
+        }
+
     }
 }
 
@@ -57,8 +62,18 @@ class App() {
 class MainWindow(val app: App) : JFrame(), ActionListener {
 
     // Fields to hold the UI elements
-    private lateinit var clicksLabel: JLabel
-    private lateinit var clickButton: JButton
+    private lateinit var locationLabel: JLabel
+    private lateinit var chipsLabel: JLabel
+    private lateinit var descriptionLabel: JLabel
+    private lateinit var availbleLocationsLabel: JLabel
+    private lateinit var searchButton: JButton
+    private lateinit var collectButton: JButton
+    private lateinit var forwardButton: JButton
+    private lateinit var backButton: JButton
+    private lateinit var leftButton: JButton
+    private lateinit var rightButton: JButton
+    private lateinit var timeBackPanel: JPanel
+    private lateinit var timeLevelPanel: JPanel
 
     /**
      * Configure the UI and display it
@@ -77,8 +92,8 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
      * Configure the main window
      */
     private fun configureWindow() {
-        title = "Kotlin Swing GUI Demo"
-        contentPane.preferredSize = Dimension(600, 350)
+        title = "Kotlin Swing GUI Project"
+        contentPane.preferredSize = Dimension(700, 550)
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
         isResizable = false
         layout = null
@@ -90,19 +105,82 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
      * Populate the UI with UI controls
      */
     private fun addControls() {
-        val baseFont = Font(Font.SANS_SERIF, Font.PLAIN, 36)
+        val baseFont = Font(Font.SANS_SERIF, Font.PLAIN, 40)
+        val smallFont = Font(Font.SANS_SERIF, Font.PLAIN, 16)
+        val mediumFont = Font(Font.SANS_SERIF, Font.PLAIN, 30)
 
-        clicksLabel = JLabel("CLICK INFO HERE")
-        clicksLabel.horizontalAlignment = SwingConstants.CENTER
-        clicksLabel.bounds = Rectangle(50, 50, 500, 100)
-        clicksLabel.font = baseFont
-        add(clicksLabel)
+        locationLabel = JLabel("Location Name")
+        locationLabel.horizontalAlignment = SwingConstants.CENTER
+        locationLabel.bounds = Rectangle(15, 25, 320, 60)
+        locationLabel.font = baseFont
+        add(locationLabel)
 
-        clickButton = JButton("Click Me!")
-        clickButton.bounds = Rectangle(50,200,500,100)
-        clickButton.font = baseFont
-        clickButton.addActionListener(this)     // Handle any clicks
-        add(clickButton)
+        chipsLabel = JLabel("Chips Collected: ${app.x}/5")
+        chipsLabel.horizontalAlignment = SwingConstants.CENTER
+        chipsLabel.bounds = Rectangle(360, 25, 270, 60)
+        chipsLabel.font = mediumFont
+        add(chipsLabel)
+
+        descriptionLabel = JLabel("Description:")
+        descriptionLabel.border = BorderFactory.createLineBorder(Color.white)
+        descriptionLabel.font = baseFont
+        descriptionLabel.bounds = Rectangle(25, 100, 280, 260)
+        add(descriptionLabel)
+
+        availbleLocationsLabel = JLabel("Available Locations:")
+        availbleLocationsLabel.border = BorderFactory.createLineBorder(Color.white)
+        availbleLocationsLabel.font = baseFont
+        availbleLocationsLabel.bounds = Rectangle(360, 100, 220, 260)
+        add(availbleLocationsLabel)
+
+
+        searchButton = JButton("Search")
+        searchButton.bounds = Rectangle(25,400,100,100)
+        searchButton.font = smallFont
+        searchButton.addActionListener(this)     // Handle any clicks
+        add(searchButton)
+
+        collectButton = JButton("Collect")
+        collectButton.bounds = Rectangle(200,400,100,100)
+        collectButton.font = smallFont
+        collectButton.addActionListener(this)     // Handle any clicks
+        add(collectButton)
+
+        forwardButton = JButton("↑")
+        forwardButton.bounds = Rectangle(450,380,50,50)
+        forwardButton.font = mediumFont
+        forwardButton.addActionListener(this)     // Handle any clicks
+        add(forwardButton)
+
+        backButton = JButton("↓")
+        backButton.bounds = Rectangle(450,450,50,50)
+        backButton.font = mediumFont
+        backButton.addActionListener(this)     // Handle any clicks
+        add(backButton)
+
+        leftButton = JButton("←")
+        leftButton.bounds = Rectangle(370,450,50,50)
+        leftButton.font = mediumFont
+        leftButton.addActionListener(this)     // Handle any clicks
+        add(leftButton)
+
+        rightButton = JButton("→")
+        rightButton.bounds = Rectangle(530,450,50,50)
+        rightButton.font = mediumFont
+        rightButton.addActionListener(this)     // Handle any clicks
+        add(rightButton)
+
+        timeBackPanel = JPanel()
+        timeBackPanel.bounds = Rectangle(590, 100, 100, 400)
+        timeBackPanel.border = BorderFactory.createLineBorder(Color.BLACK)
+        timeBackPanel.background = Color.gray
+        timeBackPanel.layout = null                // Want layout to be manual
+        add(timeBackPanel)
+
+        timeLevelPanel = JPanel()
+        timeLevelPanel.bounds = Rectangle(0, 0, 100, 300)
+        timeLevelPanel.background = Color.DARK_GRAY
+        timeBackPanel.add(timeLevelPanel)
     }
 
 
@@ -111,14 +189,6 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
      * of the application model
      */
     fun updateView() {
-        if (app.clicks == app.MAX_CLICKS) {
-            clicksLabel.text = "Max clicks reached!"
-            clickButton.isEnabled = false
-        }
-        else {
-            clicksLabel.text = "You clicked ${app.clicks} times"
-            clickButton.isEnabled = true
-        }
     }
 
     /**
@@ -128,10 +198,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
      */
     override fun actionPerformed(e: ActionEvent?) {
         when (e?.source) {
-            clickButton -> {
-                app.updateClickCount()
-                updateView()
-            }
+
         }
     }
 
