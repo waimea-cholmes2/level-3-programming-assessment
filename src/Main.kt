@@ -47,7 +47,7 @@ class App() {
         var currentLocation: Location? = null
 
         private fun setUpMap(){
-
+            // I like apples and banana's
         }
 
     }
