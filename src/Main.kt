@@ -37,20 +37,54 @@ fun main() {
 class App() {
     // Constants defining any key values
     var x = 0
+    var currentLocation: Location? = null
+
+    init {
+        setUpMap()
+    }
 
     class Location(val name: String, val description: String, ){
-        val neighbors: MutableList<Pair<String, Location>> = mutableListOf()
+        var forward: Location? = null
+        var left: Location? = null
+        var right: Location? = null
+        var back: Location? = null
     }
 
-    class GameMap {
-        val locations: MutableList<Location> = mutableListOf()
-        var currentLocation: Location? = null
+    fun setUpMap(){
+        val roulette = Location("Roulette Table","Its like spinning with a ball")
+        val blackjack = Location("Blackjack","Its got cards and stuff, people yelling hit and stuff")
+        val elevator = Location("Elevator","Its got cards and stuff")
+        val broomcloset = Location("Broom Closet","Its got cards and stuff")
+        val entrance = Location("Entrance","Its got cards and stuff")
 
-        private fun setUpMap(){
-            
+        roulette.forward = blackjack
+        roulette.left = elevator
+        roulette.right = broomcloset
+        roulette.back = entrance
+
+        elevator.right = roulette
+
+        broomcloset.left = roulette
+
+        entrance.forward = roulette
+
+        blackjack.back = roulette
+
+        currentLocation = roulette
+
+    }
+
+    fun move(direction: String) {
+        val nextLocation = when (direction) {
+            "forward" -> currentLocation?.forward
+            "back" -> currentLocation?.back
+            "left" -> currentLocation?.left
+            "right" -> currentLocation?.right
+            else -> null
         }
-
+        currentLocation = nextLocation
     }
+
 }
 
 
@@ -92,7 +126,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
      * Configure the main window
      */
     private fun configureWindow() {
-        title = "Kotlin Swing GUI Project"
+        title = "Gambling Simulator"
         contentPane.preferredSize = Dimension(700, 550)
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
         isResizable = false
@@ -189,6 +223,24 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
      * of the application model
      */
     fun updateView() {
+        locationLabel.text = app.currentLocation?.name
+        descriptionLabel.text = "Description: ${app.currentLocation?.description}"
+
+        if (app.currentLocation?.forward != null)
+            forwardButton.isEnabled = true
+        else forwardButton.isEnabled = false
+
+        if (app.currentLocation?.back != null)
+            backButton.isEnabled = true
+        else backButton.isEnabled = false
+
+        if (app.currentLocation?.left != null)
+            leftButton.isEnabled = true
+        else leftButton.isEnabled = false
+
+        if (app.currentLocation?.right != null)
+            rightButton.isEnabled = true
+        else rightButton.isEnabled = false
     }
 
     /**
@@ -198,8 +250,12 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
      */
     override fun actionPerformed(e: ActionEvent?) {
         when (e?.source) {
-
+            forwardButton -> app.move("forward")
+            backButton -> app.move("back")
+            leftButton -> app.move("left")
+            rightButton -> app.move("right")
         }
+        updateView()
     }
 
 }
