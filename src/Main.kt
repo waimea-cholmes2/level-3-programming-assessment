@@ -36,13 +36,15 @@ fun main() {
  */
 class App() {
     // Constants defining any key values
+    var time = 10
+    val MIN_TIME = 0
     var x = 0
     var currentLocation: Location? = null
     init {
         setUpMap()
     }
 
-    class Location(val name: String, val description: String, var hasChip: Boolean){
+    class Location(val name: String, val description: String, var hasChip: Boolean, var searched: Boolean = false){
         var forward: Location? = null
         var left: Location? = null
         var right: Location? = null
@@ -83,6 +85,10 @@ class App() {
             else -> null
         }
         currentLocation = nextLocation
+    }
+
+    fun decreaseTime() {
+        time++
     }
 
 }
@@ -206,13 +212,13 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         timeBackPanel = JPanel()
         timeBackPanel.bounds = Rectangle(590, 100, 100, 400)
         timeBackPanel.border = BorderFactory.createLineBorder(Color.BLACK)
-        timeBackPanel.background = Color.gray
+        timeBackPanel.background = Color.YELLOW
         timeBackPanel.layout = null                // Want layout to be manual
         add(timeBackPanel)
 
         timeLevelPanel = JPanel()
-        timeLevelPanel.bounds = Rectangle(0, 0, 100, 300)
-        timeLevelPanel.background = Color.DARK_GRAY
+        timeLevelPanel.bounds = Rectangle(0, 0, 100, 0)
+        timeLevelPanel.background = Color.BLACK
         timeBackPanel.add(timeLevelPanel)
     }
 
@@ -241,6 +247,26 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         if (app.currentLocation?.right != null)
             rightButton.isEnabled = true
         else rightButton.isEnabled = false
+
+        if (app.currentLocation?.searched == true)
+            searchButton.isEnabled = false
+        else searchButton.isEnabled = true
+
+        // Sizes of the volume bar
+        val timeHeight = calcTimePanelWidth()
+        val timeWidth = timeBackPanel.size.width
+
+        // Update the bar's size
+        timeLevelPanel.bounds = Rectangle(0, 0, timeWidth, timeHeight)
+
+        app.decreaseTime()
+    }
+
+    fun calcTimePanelWidth(): Int {
+        val timeFraction = app.time.toDouble() / 100
+        val maxWidth = timeBackPanel.bounds.width                // Size of background panel
+        val timeWidth = (maxWidth * timeFraction).toInt()         // Size in px
+        return timeWidth
     }
 
     /**
@@ -256,6 +282,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
             rightButton -> app.move("right")
 
             searchButton -> {
+                app.currentLocation?.searched = true
                 if (app.currentLocation?.hasChip == true) {
                 chipPopUp.isVisible = true
                 app.x++
