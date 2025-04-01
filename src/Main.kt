@@ -252,22 +252,28 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
             searchButton.isEnabled = false
         else searchButton.isEnabled = true
 
-        // Sizes of the volume bar
-        val timeHeight = calcTimePanelWidth()
-        val timeWidth = timeBackPanel.size.width
+        val timeHeight = calcTimePanelHeight()
+        timeLevelPanel.bounds = Rectangle(0, timeBackPanel.height - timeHeight, 100, timeHeight)
+        // Show only if it has a height
+        if (app.time > 10)
+            timeLevelPanel.isVisible = true
+        else timeLevelPanel.isVisible = false
+
+
+
 
         // Update the bar's size
-        timeLevelPanel.bounds = Rectangle(0, 0, timeWidth, timeHeight)
+        timeLevelPanel.bounds = Rectangle(0, 0, timeBackPanel.width, timeHeight)
 
         app.decreaseTime()
     }
 
-    fun calcTimePanelWidth(): Int {
+    fun calcTimePanelHeight(): Int {
         val timeFraction = app.time.toDouble() / 100
-        val maxWidth = timeBackPanel.bounds.width                // Size of background panel
-        val timeWidth = (maxWidth * timeFraction).toInt()         // Size in px
-        return timeWidth
+        val maxHeight = timeBackPanel.bounds.height   // Background panel's height
+        return (maxHeight * timeFraction).toInt()     // Calculate height dynamically
     }
+
 
     /**
      * Handle any UI events (e.g. button clicks)
