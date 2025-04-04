@@ -17,6 +17,7 @@ import com.formdev.flatlaf.FlatDarkLaf
 import java.awt.*
 import java.awt.event.*
 import javax.swing.*
+import kotlin.system.exitProcess
 
 
 /**
@@ -37,7 +38,7 @@ fun main() {
 class App() {
     // Constants defining any key values
     var time = 1
-    var x = 0
+    var totalChips = 0
     var currentLocation: Location? = null
     init {
         setUpMap()
@@ -112,7 +113,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
     private lateinit var rightButton: JButton
     private lateinit var timeBackPanel: JPanel
     private lateinit var timeLevelPanel: JPanel
-    private lateinit var chipPopUp: foundChipPopUp
+    private lateinit var pPopUp: popUp
 
 
     /**
@@ -149,7 +150,6 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         val smallFont = Font(Font.SANS_SERIF, Font.PLAIN, 16)
         val mediumFont = Font(Font.SANS_SERIF, Font.PLAIN, 30)
 
-        chipPopUp = foundChipPopUp(app)
 
         locationLabel = JLabel("Location Name")
         locationLabel.horizontalAlignment = SwingConstants.CENTER
@@ -157,7 +157,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         locationLabel.font = baseFont
         add(locationLabel)
 
-        chipsLabel = JLabel("Chips Collected: ${app.x}/5")
+        chipsLabel = JLabel("Chips Collected: ${app.totalChips}/5")
         chipsLabel.horizontalAlignment = SwingConstants.CENTER
         chipsLabel.bounds = Rectangle(360, 25, 270, 60)
         chipsLabel.font = mediumFont
@@ -227,7 +227,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
     fun updateView() {
         locationLabel.text = app.currentLocation?.name
         descriptionLabel.text = "<html>Description: ${app.currentLocation?.description}"
-        chipsLabel.text = "Chips Collected: ${app.x}/5"
+        chipsLabel.text = "Chips Collected: ${app.totalChips}/5"
 
         if (app.currentLocation?.forward != null)
             forwardButton.isEnabled = true
@@ -269,13 +269,23 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
 
 
         if (timeLevelPanel.height >= timeBackPanel.height)
-            println("ur le dead")
+        {
+            val lost = true
+            this.isVisible = false
+            pPopUp = popUp(app, foundChip = false, lost)
+            pPopUp.isVisible = true
+        }
+
+        if (app.totalChips == 5 && app.currentLocation?.name == "Roulette Table") {
+            val winner = true
+            pPopUp = popUp(app, foundChip = false, lost = false, winner)}
+            pPopUp.isVisible = true
 
 
     }
 
     fun calcTimePanelHeight(): Int {
-        val timeFraction = app.time.toDouble() / 100
+        val timeFraction = app.time.toDouble() / 5
         val maxHeight = timeBackPanel.bounds.height   // Background panel's height
         return (maxHeight * timeFraction).toInt()     // Calculate height dynamically
     }
@@ -294,11 +304,13 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
             rightButton -> app.move("right")
 
             searchButton -> {
+                val foundChip = app.currentLocation?.hasChip == true
                 app.currentLocation?.searched = true
-                chipPopUp.isVisible = true
+                pPopUp = popUp(app, foundChip)
+                pPopUp.isVisible = true
 
                 if (app.currentLocation?.hasChip == true)
-                app.x++
+                app.totalChips++
                 app.currentLocation?.hasChip = false
 
 
@@ -307,98 +319,105 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         updateView()
     }
 
-    class foundChipPopUp(val app: App) : JDialog() {
-        /**
-         * Configure the UI
-         */
-        init {
-            configureWindow()
-            addControls()
-            setLocationRelativeTo(null)     // Centre the window
-        }
 
-        /**
-         * Setup the dialog window
-         */
-        private fun configureWindow() {
-            title = "Chip Pop-Up"
-            contentPane.preferredSize = Dimension(400, 200)
-            isResizable = false
-            isModal = true
-            layout = null
-            pack()
-        }
+}
+class popUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = false, val winner: Boolean = false) : JDialog() {
+    /**
+     * Configure the UI
+     */
+    init {
+        configureWindow()
+        addControls()
+        setLocationRelativeTo(null)     // Centre the window
+    }
 
-        /**
-         * Populate the window with controls
-         */
-        private fun addControls() {
-            val baseFont = Font(Font.SANS_SERIF, Font.PLAIN, 16)
+    /**
+     * Setup the dialog window
+     */
+    private fun configureWindow() {
+        title = "Chip Pop-Up"
+        if (lost) contentPane.preferredSize = Dimension(700,500)
+        else contentPane.preferredSize = Dimension(400, 200)
+        isResizable = false
+        isModal = true
+        layout = null
+        pack()
+    }
 
-            // Adding <html> to the label text allows it to wrap
-            val message1 = JLabel("<html> ${app.currentLocation?.popUpMessage}")
-            message1.bounds = Rectangle(25, 25, 350, 150)
-            message1.verticalAlignment = SwingConstants.TOP
-            message1.font = baseFont
+    /**
+     * Populate the window with controls
+     */
+    private fun addControls() {
+        val baseFont = Font(Font.SANS_SERIF, Font.PLAIN, 16)
 
-
-            val message = JLabel("<html> I like applea and bvannas")
-            message.bounds = Rectangle(25, 25, 350, 150)
-            message.verticalAlignment = SwingConstants.TOP
-            message.font = baseFont
-
-            if (app.currentLocation?.hasChip == true)
-                add(message1)
+        // Adding <html> to the label text allows it to wrap
+        val foundChipMessage = JLabel("<html> Great Job you found a chip!")
+        foundChipMessage.bounds = Rectangle(25, 25, 350, 150)
+        foundChipMessage.verticalAlignment = SwingConstants.TOP
+        foundChipMessage.font = baseFont
 
 
-            val closeButton = JButton("Close")
-            closeButton.bounds = Rectangle(150, 130, 100, 40)
-            closeButton.addActionListener { this.isVisible = false } // Closes the pop-up
+        val noFindChipMessage = JLabel("<html> Too bad no chip here!")
+        noFindChipMessage.bounds = Rectangle(25, 25, 350, 150)
+        noFindChipMessage.verticalAlignment = SwingConstants.TOP
+        noFindChipMessage.font = baseFont
+
+        val lostMessage = JLabel("<html> Oh no you didnt make it in time and another person won all da mone")
+        lostMessage.bounds = Rectangle(25, 25, 350, 150)
+        lostMessage.verticalAlignment = SwingConstants.TOP
+        lostMessage.font = baseFont
+
+        val askWonMessage = JLabel("<html> you have all of your chips, do you want to play roulette?")
+        lostMessage.bounds = Rectangle(25, 25, 350, 150)
+        lostMessage.verticalAlignment = SwingConstants.TOP
+        lostMessage.font = baseFont
+
+        val wonMessage = JLabel("<html>Wow great job you did it! you won all the money!")
+
+        val yesButton = JButton("Yes!")
+        yesButton.bounds = Rectangle(150, 130, 100, 40)
+        yesButton.addActionListener {yesButton.isVisible = false
+                                    noButton.isVisible = false
+                                    askWonMessage.isVisible = false
+                                    wonMessage.isVisible = true
+                                    add(doneButton)
+        } // Closes the pop-up
+
+        val noButton = JButton("No!")
+        noButton.bounds = Rectangle(150, 130, 100, 40)
+        noButton.addActionListener { this.isVisible = false } // Closes the pop-up
+
+        val closeButton = JButton("Close")
+        closeButton.bounds = Rectangle(150, 130, 100, 40)
+        closeButton.addActionListener { this.isVisible = false } // Closes the pop-up
+
+        val doneButton = JButton("Done")
+        doneButton.bounds = Rectangle(150, 130, 100, 40)
+        doneButton.addActionListener{ exitProcess(0) }
+
+
+
+        if (foundChip && !lost) {
+            add(foundChipMessage)
             add(closeButton)
         }
 
-    }
-}
+        if (!foundChip && !lost) {
+            add(noFindChipMessage)
+            add(closeButton)
+        }
 
-//    class noFoundChipPopUp() : JDialog() {
-//        /**
-//         * Configure the UI
-//         */
-//        init {
-//            configureWindow()
-//            addControls()
-//            setLocationRelativeTo(null)     // Centre the window
-//        }
-//
-//        /**
-//         * Setup the dialog window
-//         */
-//        private fun configureWindow() {
-//            title = "Chip Pop-Up"
-//            contentPane.preferredSize = Dimension(400, 200)
-//            isResizable = false
-//            isModal = true
-//            layout = null
-//            pack()
-//        }
-//
-//        /**
-//         * Populate the window with controls
-//         */
-//        private fun addControls() {
-//            val baseFont = Font(Font.SANS_SERIF, Font.PLAIN, 16)
-//
-//            // Adding <html> to the label text allows it to wrap
-//            val message = JLabel("<html>OMG you didn't find la coino")
-//            message.bounds = Rectangle(25, 25, 350, 150)
-//            message.verticalAlignment = SwingConstants.TOP
-//            message.font = baseFont
-//            add(message)
-//
-//            val closeButton = JButton("Close")
-//            closeButton.bounds = Rectangle(150, 130, 100, 40)
-//            closeButton.addActionListener { this.isVisible = false } // Closes the pop-up
-//            add(closeButton)
+        // Add the lostMessage only if lost is true
+        if (lost) {
+            add(lostMessage)
+            add(doneButton)
+        }
+
+
+
+    }
+
+}
 //        }
 //
 //    }
