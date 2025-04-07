@@ -52,11 +52,11 @@ class App() {
     }
 
     fun setUpMap(){
-        val roulette = Location("Roulette Table","Its like spinning with a ball", false, "Too bad there was no chip here")
+        val roulette = Location("Roulette Table","Its like spinning with a ball", true, "Too bad there was no chip here")
         val blackjack = Location("Blackjack","Its got cards and stuff, people yelling hit and stuff", true, "Great job you found a chip!")
-        val elevator = Location("Elevator","Its got cards and stuff", false, "Too bad there was no chip here")
+        val elevator = Location("Elevator","Its got cards and stuff", true, "Too bad there was no chip here")
         val broomcloset = Location("Broom Closet","Its got cards and stuff", true, "Great job you found a chip!")
-        val entrance = Location("Entrance","Its got cards and stuff", false, "Too bad there was no chip here")
+        val entrance = Location("Entrance","Its got cards and stuff", true, "Too bad there was no chip here")
 
         roulette.forward = blackjack
         roulette.left = elevator
@@ -268,24 +268,21 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         availbleLocationsLabel.text = availableLocationsText
 
 
-        if (timeLevelPanel.height >= timeBackPanel.height)
-        {
-            val lost = true
+        if (timeLevelPanel.height >= timeBackPanel.height) {
             this.isVisible = false
-            pPopUp = popUp(app, foundChip = false, lost)
+            pPopUp = popUp(app, foundChip = false, true)
             pPopUp.isVisible = true
         }
 
         if (app.totalChips == 5 && app.currentLocation?.name == "Roulette Table") {
-            val winner = true
-            pPopUp = popUp(app, foundChip = false, lost = false, winner)}
+            pPopUp = popUp(app, foundChip = false, lost = false, true)
             pPopUp.isVisible = true
-
+        }
 
     }
 
     fun calcTimePanelHeight(): Int {
-        val timeFraction = app.time.toDouble() / 5
+        val timeFraction = app.time.toDouble() / 100
         val maxHeight = timeBackPanel.bounds.height   // Background panel's height
         return (maxHeight * timeFraction).toInt()     // Calculate height dynamically
     }
@@ -367,42 +364,51 @@ class popUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
         lostMessage.verticalAlignment = SwingConstants.TOP
         lostMessage.font = baseFont
 
-        val askWonMessage = JLabel("<html> you have all of your chips, do you want to play roulette?")
-        lostMessage.bounds = Rectangle(25, 25, 350, 150)
-        lostMessage.verticalAlignment = SwingConstants.TOP
-        lostMessage.font = baseFont
+        val askWonMessage = JLabel("<html> you have all of your chips! Do you want to play roulette?")
+        askWonMessage.bounds = Rectangle(25, 25, 350, 150)
+        askWonMessage.verticalAlignment = SwingConstants.TOP
+        askWonMessage.font = baseFont
 
         val wonMessage = JLabel("<html>Wow great job you did it! you won all the money!")
-
-        val yesButton = JButton("Yes!")
-        yesButton.bounds = Rectangle(150, 130, 100, 40)
-        yesButton.addActionListener {yesButton.isVisible = false
-                                    noButton.isVisible = false
-                                    askWonMessage.isVisible = false
-                                    wonMessage.isVisible = true
-                                    add(doneButton)
-        } // Closes the pop-up
+        wonMessage.bounds = Rectangle(25, 25, 350, 150)
+        wonMessage.verticalAlignment = SwingConstants.TOP
+        wonMessage.font = baseFont
 
         val noButton = JButton("No!")
         noButton.bounds = Rectangle(150, 130, 100, 40)
         noButton.addActionListener { this.isVisible = false } // Closes the pop-up
 
-        val closeButton = JButton("Close")
-        closeButton.bounds = Rectangle(150, 130, 100, 40)
-        closeButton.addActionListener { this.isVisible = false } // Closes the pop-up
-
         val doneButton = JButton("Done")
         doneButton.bounds = Rectangle(150, 130, 100, 40)
         doneButton.addActionListener{ exitProcess(0) }
 
+        val yesButton = JButton("Yes!")
+        yesButton.bounds = Rectangle(50, 130, 100, 40)
+        yesButton.addActionListener {
+            yesButton.isVisible = false
+            noButton.isVisible = false
+            askWonMessage.isVisible = false
+            add(wonMessage)
+            add(doneButton)
+
+        } // Closes the pop-up
 
 
-        if (foundChip && !lost) {
+
+        val closeButton = JButton("Close")
+        closeButton.bounds = Rectangle(150, 130, 100, 40)
+        closeButton.addActionListener { this.isVisible = false } // Closes the pop-up
+
+
+
+
+
+        if (foundChip && !lost && !winner) {
             add(foundChipMessage)
             add(closeButton)
         }
 
-        if (!foundChip && !lost) {
+        if (!foundChip && !lost && !winner) {
             add(noFindChipMessage)
             add(closeButton)
         }
@@ -411,6 +417,12 @@ class popUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
         if (lost) {
             add(lostMessage)
             add(doneButton)
+        }
+
+        if (winner) {
+                add(askWonMessage)
+                add(yesButton)
+                add(noButton)
         }
 
 
