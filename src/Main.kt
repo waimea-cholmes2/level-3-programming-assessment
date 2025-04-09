@@ -44,7 +44,7 @@ class App() {
         setUpMap()
     }
 
-    class Location(val name: String, val description: String, var hasChip: Boolean, val popUpMessage: String,var searched: Boolean = false){
+    class Location(val name: String, val description: String, var hasChip: Boolean, var searched: Boolean = false){
         var forward: Location? = null
         var left: Location? = null
         var right: Location? = null
@@ -52,11 +52,11 @@ class App() {
     }
 
     fun setUpMap(){
-        val roulette = Location("Roulette Table","Its like spinning with a ball", true, "Too bad there was no chip here")
-        val blackjack = Location("Blackjack","Its got cards and stuff, people yelling hit and stuff", true, "Great job you found a chip!")
-        val elevator = Location("Elevator","Its got cards and stuff", true, "Too bad there was no chip here")
-        val broomcloset = Location("Broom Closet","Its got cards and stuff", true, "Great job you found a chip!")
-        val entrance = Location("Entrance","Its got cards and stuff", true, "Too bad there was no chip here")
+        val roulette = Location("Roulette Table","Its like spinning with a ball", true)
+        val blackjack = Location("Blackjack","Its got cards and stuff, people yelling hit and stuff", true)
+        val elevator = Location("Elevator","Its got cards and stuff", true)
+        val broomcloset = Location("Broom Closet","Its got cards and stuff", true)
+        val entrance = Location("Entrance","Its got cards and stuff", true)
 
         roulette.forward = blackjack
         roulette.left = elevator
@@ -113,7 +113,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
     private lateinit var rightButton: JButton
     private lateinit var timeBackPanel: JPanel
     private lateinit var timeLevelPanel: JPanel
-    private lateinit var pPopUp: popUp
+    private lateinit var pPopUp: PopUp
 
 
     /**
@@ -151,7 +151,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         val mediumFont = Font(Font.SANS_SERIF, Font.PLAIN, 30)
 
 
-        locationLabel = JLabel("Location Name")
+        locationLabel = JLabel("")
         locationLabel.horizontalAlignment = SwingConstants.CENTER
         locationLabel.bounds = Rectangle(15, 25, 320, 60)
         locationLabel.font = baseFont
@@ -225,7 +225,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
      * of the application model
      */
     fun updateView() {
-        locationLabel.text = app.currentLocation?.name
+        locationLabel.text = app.currentLocation?.name + "⛇"
         descriptionLabel.text = "<html>Description: ${app.currentLocation?.description}"
         chipsLabel.text = "Chips Collected: ${app.totalChips}/5"
 
@@ -270,19 +270,19 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
 
         if (timeLevelPanel.height >= timeBackPanel.height) {
             this.isVisible = false
-            pPopUp = popUp(app, foundChip = false, true)
+            pPopUp = PopUp(app, foundChip = false, true)
             pPopUp.isVisible = true
         }
 
         if (app.totalChips == 5 && app.currentLocation?.name == "Roulette Table") {
-            pPopUp = popUp(app, foundChip = false, lost = false, true)
+            pPopUp = PopUp(app, foundChip = false, lost = false, true)
             pPopUp.isVisible = true
         }
 
     }
 
     fun calcTimePanelHeight(): Int {
-        val timeFraction = app.time.toDouble() / 100
+        val timeFraction = app.time.toDouble() / 10
         val maxHeight = timeBackPanel.bounds.height   // Background panel's height
         return (maxHeight * timeFraction).toInt()     // Calculate height dynamically
     }
@@ -303,7 +303,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
             searchButton -> {
                 val foundChip = app.currentLocation?.hasChip == true
                 app.currentLocation?.searched = true
-                pPopUp = popUp(app, foundChip)
+                pPopUp = PopUp(app, foundChip)
                 pPopUp.isVisible = true
 
                 if (app.currentLocation?.hasChip == true)
@@ -318,7 +318,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
 
 
 }
-class popUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = false, val winner: Boolean = false) : JDialog() {
+class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = false, val winner: Boolean = false) : JDialog() {
     /**
      * Configure the UI
      */
@@ -348,6 +348,12 @@ class popUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
         val baseFont = Font(Font.SANS_SERIF, Font.PLAIN, 16)
 
         // Adding <html> to the label text allows it to wrap
+
+        val instructions = JLabel("yadadadadadadada Instructions mumbo jumbo")
+        instructions.bounds = Rectangle(25, 25, 350, 150)
+        instructions.verticalAlignment = SwingConstants.TOP
+        instructions.font = baseFont
+
         val foundChipMessage = JLabel("<html> Great Job you found a chip!")
         foundChipMessage.bounds = Rectangle(25, 25, 350, 150)
         foundChipMessage.verticalAlignment = SwingConstants.TOP
