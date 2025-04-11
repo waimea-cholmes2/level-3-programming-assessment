@@ -106,6 +106,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
     private lateinit var chipsLabel: JLabel
     private lateinit var descriptionLabel: JLabel
     private lateinit var availbleLocationsLabel: JLabel
+    private lateinit var helpButton: JButton
     private lateinit var searchButton: JButton
     private lateinit var forwardButton: JButton
     private lateinit var backButton: JButton
@@ -174,6 +175,11 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         availbleLocationsLabel.font = smallFont
         availbleLocationsLabel.bounds = Rectangle(360, 100, 220, 260)
         add(availbleLocationsLabel)
+
+        helpButton = JButton("Help")
+        helpButton.bounds = Rectangle(200, 50, 60, 50)
+        helpButton.addActionListener(this)
+        add(helpButton)
 
 
         searchButton = JButton("Search")
@@ -312,13 +318,15 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
 
 
             }
+
+            helpButton -> {}
         }
         updateView()
     }
 
 
 }
-class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = false, val winner: Boolean = false) : JDialog() {
+class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = false, val winner: Boolean = false, val instruct: Boolean = false) : JDialog() {
     /**
      * Configure the UI
      */
