@@ -126,8 +126,8 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
 
         setLocationRelativeTo(null)     // Centre the window
         isVisible = true                // Make it visible
-
         updateView()                    // Initialise the UI
+        HelpPopUpDialog().isVisible = true
     }
 
     /**
@@ -301,10 +301,15 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
      */
     override fun actionPerformed(e: ActionEvent?) {
         when (e?.source) {
-            forwardButton -> app.move("forward")
-            backButton -> app.move("back")
-            leftButton -> app.move("left")
-            rightButton -> app.move("right")
+            forwardButton -> {app.move("forward")
+                updateView() }
+            backButton -> {app.move("back")
+                updateView() }
+            leftButton -> {
+                app.move("left")
+                updateView() }
+            rightButton -> {app.move("right")
+                updateView() }
 
             searchButton -> {
                 val foundChip = app.currentLocation?.hasChip == true
@@ -315,13 +320,15 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
                 if (app.currentLocation?.hasChip == true)
                 app.totalChips++
                 app.currentLocation?.hasChip = false
-
+                updateView()
 
             }
 
-            helpButton -> {}
+            helpButton -> {
+                HelpPopUpDialog().isVisible = true
+            }
         }
-        updateView()
+
     }
 
 
@@ -356,11 +363,6 @@ class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
         val baseFont = Font(Font.SANS_SERIF, Font.PLAIN, 16)
 
         // Adding <html> to the label text allows it to wrap
-
-        val instructions = JLabel("yadadadadadadada Instructions mumbo jumbo")
-        instructions.bounds = Rectangle(25, 25, 350, 150)
-        instructions.verticalAlignment = SwingConstants.TOP
-        instructions.font = baseFont
 
         val foundChipMessage = JLabel("<html> Great Job you found a chip!")
         foundChipMessage.bounds = Rectangle(25, 25, 350, 150)
@@ -407,8 +409,6 @@ class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
 
         } // Closes the pop-up
 
-
-
         val closeButton = JButton("Close")
         closeButton.bounds = Rectangle(150, 130, 100, 40)
         closeButton.addActionListener { this.isVisible = false } // Closes the pop-up
@@ -444,9 +444,49 @@ class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
     }
 
 }
-//        }
-//
-//    }
-//}
+
+class HelpPopUpDialog(): JDialog() {
+    /**
+     * Configure the UI
+     */
+    init {
+        configureWindow()
+        addControls()
+        setLocationRelativeTo(null)     // Centre the window
+    }
+
+    /**
+     * Setup the dialog window
+     */
+    private fun configureWindow() {
+        title = "Example Pop-Up"
+        contentPane.preferredSize = Dimension(400, 200)
+        isResizable = false
+        isModal = true
+        layout = null
+        pack()
+    }
+
+    /**
+     * Populate the window with controls
+     */
+    private fun addControls() {
+        val baseFont = Font(Font.SANS_SERIF, Font.PLAIN, 16)
+
+        // Adding <html> to the label text allows it to wrap
+        val message = JLabel("<html>yo yo background and instructions yo")
+        message.bounds = Rectangle(25, 25, 350, 150)
+        message.verticalAlignment = SwingConstants.TOP
+        message.font = baseFont
+        add(message)
+
+        val closeButton = JButton("Close")
+        closeButton.bounds = Rectangle(150, 130, 100, 40)
+        closeButton.addActionListener { this.isVisible = false } // Closes the pop-up
+        add(closeButton)
+    }
+
+}
+
 
 
