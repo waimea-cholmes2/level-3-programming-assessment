@@ -105,7 +105,9 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
     private lateinit var locationLabel: JLabel
     private lateinit var chipsLabel: JLabel
     private lateinit var descriptionLabel: JLabel
-    private lateinit var availbleLocationsLabel: JLabel
+    private lateinit var descriptionTextLabel: JLabel
+    private lateinit var availableLocationsLabel: JLabel
+    private lateinit var availableLocationsTextLabel: JLabel
     private lateinit var helpButton: JButton
     private lateinit var searchButton: JButton
     private lateinit var forwardButton: JButton
@@ -114,7 +116,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
     private lateinit var rightButton: JButton
     private lateinit var timeBackPanel: JPanel
     private lateinit var timeLevelPanel: JPanel
-    private lateinit var pPopUp: PopUp
+    private lateinit var resultPopUp: PopUp
 
 
     /**
@@ -127,7 +129,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         setLocationRelativeTo(null)     // Centre the window
         isVisible = true                // Make it visible
         updateView()                    // Initialise the UI
-        HelpPopUpDialog().isVisible = true
+        InstructionsPopUp().isVisible = true // Display Instructions and Backstory
     }
 
     /**
@@ -149,6 +151,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
     private fun addControls() {
         val baseFont = Font(Font.SANS_SERIF, Font.PLAIN, 40)
         val smallFont = Font(Font.SANS_SERIF, Font.PLAIN, 16)
+        val mediumSmallFont = Font(Font.SANS_SERIF, Font.PLAIN, 20)
         val mediumFont = Font(Font.SANS_SERIF, Font.PLAIN, 30)
 
 
@@ -164,17 +167,32 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         chipsLabel.font = mediumFont
         add(chipsLabel)
 
-        descriptionLabel = JLabel("Description:")
+        descriptionTextLabel = JLabel("Description:")
+        descriptionTextLabel.border = BorderFactory.createLineBorder(Color.white)
+        descriptionTextLabel.horizontalAlignment = SwingConstants.CENTER
+        descriptionTextLabel.bounds = Rectangle(25,100,280,30)
+        descriptionTextLabel.font = mediumFont
+        descriptionTextLabel.background = Color.DARK_GRAY
+        add(descriptionTextLabel)
+
+        descriptionLabel = JLabel("${app.currentLocation?.description}")
         descriptionLabel.border = BorderFactory.createLineBorder(Color.white)
         descriptionLabel.font = baseFont
-        descriptionLabel.bounds = Rectangle(25, 100, 280, 260)
+        descriptionLabel.bounds = Rectangle(25, 130, 280, 230)
         add(descriptionLabel)
 
-        availbleLocationsLabel = JLabel("<html>Available Locations:")
-        availbleLocationsLabel.border = BorderFactory.createLineBorder(Color.white)
-        availbleLocationsLabel.font = smallFont
-        availbleLocationsLabel.bounds = Rectangle(360, 100, 220, 260)
-        add(availbleLocationsLabel)
+        availableLocationsTextLabel = JLabel("Available Locations:")
+        availableLocationsTextLabel.font = mediumSmallFont
+        availableLocationsTextLabel.border = BorderFactory.createLineBorder(Color.WHITE)
+        availableLocationsTextLabel.horizontalAlignment = SwingConstants.CENTER
+        availableLocationsTextLabel.bounds = Rectangle(360,100,220,30)
+        add(availableLocationsTextLabel)
+
+        availableLocationsLabel = JLabel()
+        availableLocationsLabel.border = BorderFactory.createLineBorder(Color.white)
+        availableLocationsLabel.font = mediumSmallFont
+        availableLocationsLabel.bounds = Rectangle(360, 130, 220, 230)
+        add(availableLocationsLabel)
 
         helpButton = JButton("Help")
         helpButton.bounds = Rectangle(200, 50, 60, 50)
@@ -232,7 +250,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
      */
     fun updateView() {
         locationLabel.text = app.currentLocation?.name + "⛇"
-        descriptionLabel.text = "<html>Description: ${app.currentLocation?.description}"
+        descriptionLabel.text = "<html>${app.currentLocation?.description}"
         chipsLabel.text = "Chips Collected: ${app.totalChips}/5"
 
         if (app.currentLocation?.forward != null)
@@ -264,25 +282,25 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         app.increaseTime()
 
 
-        var availableLocationsText = "<html>Available Locations:<br>"
+        var availableLocationsText = "<html>"
 
         if (app.currentLocation?.forward != null) availableLocationsText += "Forward: ${app.currentLocation?.forward?.name}<br>"
         if (app.currentLocation?.back != null) availableLocationsText += "Back: ${app.currentLocation?.back?.name}<br>"
         if (app.currentLocation?.left != null) availableLocationsText += "Left: ${app.currentLocation?.left?.name}<br>"
         if (app.currentLocation?.right != null) availableLocationsText += "Right: ${app.currentLocation?.right?.name}<br>"
 
-        availbleLocationsLabel.text = availableLocationsText
+        availableLocationsLabel.text = availableLocationsText
 
 
         if (timeLevelPanel.height >= timeBackPanel.height) {
             this.isVisible = false
-            pPopUp = PopUp(app, foundChip = false, true)
-            pPopUp.isVisible = true
+            resultPopUp = PopUp(app, foundChip = false, true)
+            resultPopUp.isVisible = true
         }
 
         if (app.totalChips == 5 && app.currentLocation?.name == "Roulette Table") {
-            pPopUp = PopUp(app, foundChip = false, lost = false, true)
-            pPopUp.isVisible = true
+            resultPopUp = PopUp(app, foundChip = false, lost = false, true)
+            resultPopUp.isVisible = true
         }
 
     }
@@ -314,10 +332,10 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
             searchButton -> {
                 val foundChip = app.currentLocation?.hasChip == true
                 app.currentLocation?.searched = true
-                pPopUp = PopUp(app, foundChip)
-                pPopUp.isVisible = true
+                resultPopUp = PopUp(app, foundChip)
+                resultPopUp.isVisible = true
 
-                if (app.currentLocation?.hasChip == true)
+                if (foundChip)
                 app.totalChips++
                 app.currentLocation?.hasChip = false
                 updateView()
@@ -325,7 +343,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
             }
 
             helpButton -> {
-                HelpPopUpDialog().isVisible = true
+                InstructionsPopUp().isVisible = true
             }
         }
 
@@ -445,7 +463,7 @@ class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
 
 }
 
-class HelpPopUpDialog(): JDialog() {
+class InstructionsPopUp(): JDialog() {
     /**
      * Configure the UI
      */
