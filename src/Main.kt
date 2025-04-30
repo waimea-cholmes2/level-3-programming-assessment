@@ -38,8 +38,10 @@ fun main() {
 class App() {
     // Constants defining any key values
     var time = 1
+    val maxTime = 50
     var totalChips = 0
-    var currentLocation: Location? = null
+    val totalChipsNeeded = 5
+    lateinit var currentLocation: Location
     init {
         setUpMap()
     }
@@ -51,6 +53,9 @@ class App() {
         var back: Location? = null
     }
 
+    /**
+     * This function is used to setup the map of the game, where it defines each location and defines which locations are next to it.
+     */
     fun setUpMap(){
         val roulette = Location("Roulette Table","Its like spinning with a ball", true)
         val blackjack = Location("Blackjack","Its got cards and stuff, people yelling hit and stuff", true)
@@ -75,18 +80,23 @@ class App() {
 
     }
 
-
+    /**
+     * This function has the purpose of setting the players new currentLocation, I used a when loop in this to avoid a bunch of if else's
+     */
     fun move(direction: String) {
         val nextLocation = when (direction) {
-            "forward" -> currentLocation?.forward
-            "back" -> currentLocation?.back
-            "left" -> currentLocation?.left
-            "right" -> currentLocation?.right
+            "forward" -> currentLocation.forward
+            "back" -> currentLocation.back
+            "left" -> currentLocation.left
+            "right" -> currentLocation.right
             else -> null
         }
-        currentLocation = nextLocation
+        currentLocation = nextLocation!!
     }
 
+    /**
+     * This function increases the value time, which is used to calculate the height of the timeLevelBar
+     */
     fun increaseTime() {
         time++
     }
@@ -154,19 +164,19 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         val mediumSmallFont = Font(Font.SANS_SERIF, Font.PLAIN, 20)
         val mediumFont = Font(Font.SANS_SERIF, Font.PLAIN, 30)
 
-
+        //This says the name of the current location
         locationLabel = JLabel("")
         locationLabel.horizontalAlignment = SwingConstants.CENTER
         locationLabel.bounds = Rectangle(15, 25, 320, 60)
         locationLabel.font = baseFont
         add(locationLabel)
-
+        //This shows how many chips have been collected by the player
         chipsLabel = JLabel("Chips Collected: ${app.totalChips}/5")
         chipsLabel.horizontalAlignment = SwingConstants.CENTER
         chipsLabel.bounds = Rectangle(360, 25, 270, 60)
         chipsLabel.font = mediumFont
         add(chipsLabel)
-
+        //This is the label above the description of the current location
         descriptionTextLabel = JLabel("Description:")
         descriptionTextLabel.border = BorderFactory.createLineBorder(Color.white)
         descriptionTextLabel.horizontalAlignment = SwingConstants.CENTER
@@ -174,8 +184,8 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         descriptionTextLabel.font = mediumFont
         descriptionTextLabel.background = Color.DARK_GRAY
         add(descriptionTextLabel)
-
-        descriptionLabel = JLabel("${app.currentLocation?.description}")
+        //This is the description of the current location
+        descriptionLabel = JLabel(app.currentLocation.description)
         descriptionLabel.border = BorderFactory.createLineBorder(Color.white)
         descriptionLabel.font = baseFont
         descriptionLabel.bounds = Rectangle(25, 130, 280, 230)
@@ -249,27 +259,17 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
      * of the application model
      */
     fun updateView() {
-        locationLabel.text = app.currentLocation?.name + "⛇"
-        descriptionLabel.text = "<html>${app.currentLocation?.description}"
+        locationLabel.text = app.currentLocation.name + "⛇"
+        descriptionLabel.text = "<html>${app.currentLocation.description}"
         chipsLabel.text = "Chips Collected: ${app.totalChips}/5"
 
-        if (app.currentLocation?.forward != null)
-            forwardButton.isEnabled = true
-        else forwardButton.isEnabled = false
+        forwardButton.isEnabled = app.currentLocation.forward != null
+        backButton.isEnabled = app.currentLocation.back != null
+        leftButton.isEnabled = app.currentLocation.left != null
+        rightButton.isEnabled = app.currentLocation.right != null
 
-        if (app.currentLocation?.back != null)
-            backButton.isEnabled = true
-        else backButton.isEnabled = false
 
-        if (app.currentLocation?.left != null)
-            leftButton.isEnabled = true
-        else leftButton.isEnabled = false
-
-        if (app.currentLocation?.right != null)
-            rightButton.isEnabled = true
-        else rightButton.isEnabled = false
-
-        if (app.currentLocation?.searched == true)
+        if (app.currentLocation.searched)
             searchButton.isEnabled = false
         else searchButton.isEnabled = true
 
@@ -284,29 +284,30 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
 
         var availableLocationsText = "<html>"
 
-        if (app.currentLocation?.forward != null) availableLocationsText += "Forward: ${app.currentLocation?.forward?.name}<br>"
-        if (app.currentLocation?.back != null) availableLocationsText += "Back: ${app.currentLocation?.back?.name}<br>"
-        if (app.currentLocation?.left != null) availableLocationsText += "Left: ${app.currentLocation?.left?.name}<br>"
-        if (app.currentLocation?.right != null) availableLocationsText += "Right: ${app.currentLocation?.right?.name}<br>"
+        if (app.currentLocation.forward != null) availableLocationsText += "Forward: ${app.currentLocation.forward?.name}<br>"
+        if (app.currentLocation.back != null) availableLocationsText += "Back: ${app.currentLocation.back?.name}<br>"
+        if (app.currentLocation.left != null) availableLocationsText += "Left: ${app.currentLocation.left?.name}<br>"
+        if (app.currentLocation.right != null) availableLocationsText += "Right: ${app.currentLocation.right?.name}<br>"
 
         availableLocationsLabel.text = availableLocationsText
 
 
-        if (timeLevelPanel.height >= timeBackPanel.height) {
+        if (timeLevelPanel.height >= timeBackPanel.height-7) {
             this.isVisible = false
             resultPopUp = PopUp(app, foundChip = false, true)
             resultPopUp.isVisible = true
         }
 
-        if (app.totalChips == 5 && app.currentLocation?.name == "Roulette Table") {
+        if (app.totalChips == app.totalChipsNeeded && app.currentLocation.name == "Roulette Table") {
             resultPopUp = PopUp(app, foundChip = false, lost = false, true)
             resultPopUp.isVisible = true
+            exitProcess(0)
         }
 
     }
 
     fun calcTimePanelHeight(): Int {
-        val timeFraction = app.time.toDouble() / 10
+        val timeFraction = app.time.toDouble() / app.maxTime
         val maxHeight = timeBackPanel.bounds.height   // Background panel's height
         return (maxHeight * timeFraction).toInt()     // Calculate height dynamically
     }
@@ -330,14 +331,14 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
                 updateView() }
 
             searchButton -> {
-                val foundChip = app.currentLocation?.hasChip == true
-                app.currentLocation?.searched = true
+                val foundChip = app.currentLocation.hasChip
+                app.currentLocation.searched = true
                 resultPopUp = PopUp(app, foundChip)
                 resultPopUp.isVisible = true
 
                 if (foundChip)
                 app.totalChips++
-                app.currentLocation?.hasChip = false
+                app.currentLocation.hasChip = false
                 updateView()
 
             }
@@ -397,34 +398,16 @@ class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
         lostMessage.verticalAlignment = SwingConstants.TOP
         lostMessage.font = baseFont
 
-        val askWonMessage = JLabel("<html> you have all of your chips! Do you want to play roulette?")
-        askWonMessage.bounds = Rectangle(25, 25, 350, 150)
-        askWonMessage.verticalAlignment = SwingConstants.TOP
-        askWonMessage.font = baseFont
-
         val wonMessage = JLabel("<html>Wow great job you did it! you won all the money!")
         wonMessage.bounds = Rectangle(25, 25, 350, 150)
         wonMessage.verticalAlignment = SwingConstants.TOP
         wonMessage.font = baseFont
 
-        val noButton = JButton("No!")
-        noButton.bounds = Rectangle(150, 130, 100, 40)
-        noButton.addActionListener { this.isVisible = false } // Closes the pop-up
-
         val doneButton = JButton("Done")
         doneButton.bounds = Rectangle(150, 130, 100, 40)
         doneButton.addActionListener{ exitProcess(0) }
 
-        val yesButton = JButton("Yes!")
-        yesButton.bounds = Rectangle(50, 130, 100, 40)
-        yesButton.addActionListener {
-            yesButton.isVisible = false
-            noButton.isVisible = false
-            askWonMessage.isVisible = false
-            add(wonMessage)
-            add(doneButton)
-
-        } // Closes the pop-up
+         // Closes the pop-up
 
         val closeButton = JButton("Close")
         closeButton.bounds = Rectangle(150, 130, 100, 40)
@@ -449,9 +432,8 @@ class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
                 add(closeButton)
             }
             winner -> {
-                add(askWonMessage)
-                add(yesButton)
-                add(noButton)
+                add(wonMessage)
+                add(doneButton)
             }
         }
 
@@ -476,7 +458,7 @@ class InstructionsPopUp(): JDialog() {
      */
     private fun configureWindow() {
         title = "Instructions"
-        contentPane.preferredSize = Dimension(400, 200)
+        contentPane.preferredSize = Dimension(400, 400)
         isResizable = false
         isModal = true
         layout = null
@@ -490,14 +472,24 @@ class InstructionsPopUp(): JDialog() {
         val baseFont = Font(Font.SANS_SERIF, Font.PLAIN, 16)
 
         // Adding <html> to the label text allows it to wrap
-        val message = JLabel("<html>yo yo background and instructions yo")
-        message.bounds = Rectangle(25, 25, 350, 150)
+        val message = JLabel("<html> <p><b>BACKSTORY:</b><br>\n" +
+                "    You've rigged the roulette table using magnets to always land on 17... but tripped while carrying your chips! Now they've scattered across the casino.</p>\n" +
+                "    \n" +
+                "    <p><b>OBJECTIVE:</b><br>\n" +
+                "    • Find all 5 lost chips before the casino closes<br>\n" +
+                "    • Return to the roulette table to win your prize</p>\n" +
+                "    \n" +
+                "    <p><b>CONTROLS:</b><br>\n" +
+                "    ↑↓←→ Move between areas<br>\n" +
+                "    [SEARCH] Search the room for chips<br>\n" +
+                "    [TIME BAR] Shows time left to find the chips</p>")
+        message.bounds = Rectangle(25, 25, 350, 375)
         message.verticalAlignment = SwingConstants.TOP
         message.font = baseFont
         add(message)
 
         val closeButton = JButton("Close")
-        closeButton.bounds = Rectangle(150, 130, 100, 40)
+        closeButton.bounds = Rectangle(150, 330, 100, 40)
         closeButton.addActionListener { this.isVisible = false } // Closes the pop-up
         add(closeButton)
     }
