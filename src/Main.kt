@@ -195,7 +195,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         add(availableLocationsLabel)
 
         helpButton = JButton("Help")
-        helpButton.bounds = Rectangle(200, 50, 60, 50)
+        helpButton.bounds = Rectangle(610, 450, 60, 50)
         helpButton.addActionListener(this)
         add(helpButton)
 
@@ -219,20 +219,20 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         add(backButton)
 
         leftButton = JButton("←")
-        leftButton.bounds = Rectangle(370, 450, 50, 50)
+        leftButton.bounds = Rectangle(380, 450, 50, 50)
         leftButton.font = mediumFont
         leftButton.addActionListener(this)     // Handle any clicks
         add(leftButton)
 
         rightButton = JButton("→")
-        rightButton.bounds = Rectangle(530, 450, 50, 50)
+        rightButton.bounds = Rectangle(520, 450, 50, 50)
         rightButton.font = mediumFont
         rightButton.addActionListener(this)     // Handle any clicks
         add(rightButton)
 
         timeBackPanel = JPanel()
-        timeBackPanel.bounds = Rectangle(590, 100, 100, 400)
-        timeBackPanel.border = BorderFactory.createLineBorder(Color.BLACK)
+        timeBackPanel.bounds = Rectangle(590, 100, 100, 300)
+        timeBackPanel.border = BorderFactory.createLineBorder((Color.BLACK),7)
         timeBackPanel.background = Color.YELLOW
         timeBackPanel.layout = null                // Want layout to be manual
         add(timeBackPanel)
@@ -365,9 +365,8 @@ class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
      * Setup the dialog window
      */
     private fun configureWindow() {
-        title = "Chip Pop-Up"
-        if (lost) contentPane.preferredSize = Dimension(700,500)
-        else contentPane.preferredSize = Dimension(400, 200)
+        title = "Pop-Up"
+        contentPane.preferredSize = Dimension(400, 200)
         isResizable = false
         isModal = true
         layout = null
@@ -393,7 +392,7 @@ class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
         noFindChipMessage.verticalAlignment = SwingConstants.TOP
         noFindChipMessage.font = baseFont
 
-        val lostMessage = JLabel("<html> Oh no you didnt make it in time and another person won all da mone")
+        val lostMessage = JLabel("<html> Oh too bad! You took too long to find all of the chips and someone finally realised the ball kept landing on 17.")
         lostMessage.bounds = Rectangle(25, 25, 350, 150)
         lostMessage.verticalAlignment = SwingConstants.TOP
         lostMessage.font = baseFont
@@ -435,26 +434,25 @@ class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
 
 
 
-        if (foundChip && !lost && !winner) {
-            add(foundChipMessage)
-            add(closeButton)
-        }
 
-        if (!foundChip && !lost && !winner) {
-            add(noFindChipMessage)
-            add(closeButton)
-        }
-
-        // Add the lostMessage only if lost is true
-        if (lost) {
-            add(lostMessage)
-            add(doneButton)
-        }
-
-        if (winner) {
+        when {
+            lost -> {
+                add(lostMessage)
+                add(doneButton)
+            }
+            foundChip -> {
+                add(foundChipMessage)
+                add(closeButton)
+            }
+            !foundChip && !winner && !lost -> {
+                add(noFindChipMessage)
+                add(closeButton)
+            }
+            winner -> {
                 add(askWonMessage)
                 add(yesButton)
                 add(noButton)
+            }
         }
 
 
@@ -477,7 +475,7 @@ class InstructionsPopUp(): JDialog() {
      * Setup the dialog window
      */
     private fun configureWindow() {
-        title = "Example Pop-Up"
+        title = "Instructions"
         contentPane.preferredSize = Dimension(400, 200)
         isResizable = false
         isModal = true
