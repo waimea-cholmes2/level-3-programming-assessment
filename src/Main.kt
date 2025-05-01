@@ -269,9 +269,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         rightButton.isEnabled = app.currentLocation.right != null
 
 
-        if (app.currentLocation.searched)
-            searchButton.isEnabled = false
-        else searchButton.isEnabled = true
+        searchButton.isEnabled = !app.currentLocation.searched
 
         val timeHeight = calcTimePanelHeight()
         // Show only if it has a height
@@ -352,7 +350,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
 
 
 }
-class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = false, val winner: Boolean = false, val instruct: Boolean = false) : JDialog() {
+class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = false, val winner: Boolean = false) : JDialog() {
     /**
      * Configure the UI
      */
