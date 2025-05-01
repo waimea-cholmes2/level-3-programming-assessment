@@ -221,6 +221,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
     private lateinit var rightButton: JButton
     private lateinit var timeBackPanel: JPanel
     private lateinit var timeLevelPanel: JPanel
+    private lateinit var timeLabel: JLabel
     private lateinit var resultPopUp: PopUp
 
 
@@ -337,15 +338,22 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         //This is the panel that the level panel slides down
         timeBackPanel = JPanel()
         timeBackPanel.bounds = Rectangle(590, 100, 100, 300)
-        timeBackPanel.border = BorderFactory.createLineBorder((Color.BLACK),7)
+        timeBackPanel.border = BorderFactory.createLineBorder((Color.GRAY),7)
         timeBackPanel.background = Color.YELLOW
         timeBackPanel.layout = null                // Want layout to be manual
         add(timeBackPanel)
         //This panel slides down the back panel as each move is made
         timeLevelPanel = JPanel()
         timeLevelPanel.bounds = Rectangle(0, 0, 100, 0)
-        timeLevelPanel.background = Color.BLACK
+        timeLevelPanel.background = Color.GRAY
         timeBackPanel.add(timeLevelPanel)
+
+        timeLabel = JLabel("TIME")
+        timeLabel.bounds = Rectangle(590,100,100,100)
+        timeLabel.horizontalAlignment = SwingConstants.CENTER
+        timeLabel.font = averageFont
+        timeLabel.foreground = Color.BLACK
+        add(timeLabel)
     }
 
 
