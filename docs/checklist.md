@@ -38,7 +38,7 @@ The program structure:
 The program code:
 - [x] Is **indented** correctly
 - [x] Is **laid-out clearly**
-- [ ] Contains **comments** that help in understanding how it works
+- [x] Contains **comments** that help in understanding how it works
 
 ### Program Testing
 
@@ -85,10 +85,10 @@ The game GUI:
 ### Program Documentation
 
 The program code is well-commented:
-- [ ] **JavaDoc Block comments** are used at the top of each **file** and **function**
-- [ ] Comments accurately describe the **function and behaviour** of the code:
-  - [ ] Defining the **purpose** of functions / key blocks of code
-  - [ ] Explaining the **reason** (the '**why**') of key parts of the code
+- [x] **JavaDoc Block comments** are used at the top of each **file** and **function**
+- [x] Comments accurately describe the **function and behaviour** of the code:
+  - [x] Defining the **purpose** of functions / key blocks of code
+  - [x] Explaining the **reason** (the '**why**') of key parts of the code
   - [ ] Defining function **parameters** and/or **return values**
 
 ### Program Testing
@@ -126,7 +126,7 @@ The game GUI:
 ### Program Documentation
 
 The program code:
-- [ ] Code is laid-out and organised **logically and concisely**
+- [x] Code is laid-out and organised **logically and concisely**
 
 ### Program Testing
 
