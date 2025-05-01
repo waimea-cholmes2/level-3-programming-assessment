@@ -1,4 +1,4 @@
-# PROJECT NAME HERE
+# High Stakes
 
 by Cooper Holmes
 
@@ -11,7 +11,6 @@ The project is written in the [Kotlin](https://kotlinlang.org) programming langu
 - Reading from, or writing to, files
 - Object-oriented programming (OOP) classes and objects
 - Self-defined types
-- Using non-core API, library or framework 
 - Using complex data structures (e.g. stacks, queues, trees)
 
 ** EDIT LIST ABOVE TO MATCH YOUR PROJECT**
@@ -28,5 +27,5 @@ The project is written in the [Kotlin](https://kotlinlang.org) programming langu
 
 ## Project Description
 
-**PLACE YOUR PROJECT DESCRIPTION HERE**
+High Stakes is a game where the player has rigged a roulette table and is going to bet all of their money and win big, then on they way to the table they drop all of their chips, now they need to find all of their chips before the casino closes.
 

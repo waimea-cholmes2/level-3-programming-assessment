@@ -242,7 +242,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
      * Configure the main window
      */
     private fun configureWindow() {
-        title = "Gambling Simulator"
+        title = "High Stakes"
         contentPane.preferredSize = Dimension(700, 550)
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
         isResizable = false
