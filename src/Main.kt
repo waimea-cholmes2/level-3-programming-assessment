@@ -39,7 +39,7 @@ fun main() {
 class App() {
     // Constants defining any key values
     var time = 1
-    val maxTime = 90
+    val maxTime = 75
     var totalChips = 0
     val totalChipsNeeded = 5
     lateinit var currentLocation: Location
@@ -673,7 +673,7 @@ class InstructionsPopUp : JDialog() {
     }
 
     /**
-     * Setup the dialog window
+     * Set up the dialog window
      */
     private fun configureWindow() {
         title = "Instructions"

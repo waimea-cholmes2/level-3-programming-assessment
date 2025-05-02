@@ -25,9 +25,10 @@ I will also use the invalid moves of moving in a direction where there is no Loc
 
 when I press any of these buttons the current location should change to
 the location that was displayed as being in that direction on the available 
-locations label. When the invalid move of moving in a direction without a 
-Location is attempted it should be impossible as the button going in that 
-direction should be disabled
+locations label, as well as the available locations label changing to display 
+the available locations for the new Location. When the invalid move of moving in a
+direction without a Location is attempted it should be impossible as the button going
+in that direction should be disabled
 
 ---
 
@@ -67,7 +68,7 @@ I will collect all the chips and return to the roulette table to win the game, t
 ### Expected Test Result
 
 when I collect all the chips and return to roulette the win pop-up should appear, 
-and when i lose the main window should disappear and the lost pop-up should appear.
+and when I lose the main window should disappear and the lost pop-up should appear.
 After win/lose state, a final message or UI indication should appear confirming 
 the result.
 
@@ -116,9 +117,9 @@ I will use valid moves to move around the map and search locations and use the h
 
 ### Expected Test Result
 
-When i make any valid moves the time level will decrease, except for when 
+When I make any valid moves the time level will decrease, except for when 
 I use the help button, in which the time should not decrease, 
-and i will test the boundary of the player not being able to continue once the 
+and I will test the boundary of the player not being able to continue once the 
 time level has decreased to the loosing amount
 
 ---
@@ -144,6 +145,20 @@ When I spam the search button it should initially open a pop-up saying if
 I found a chip or not, and I should not be able to interact with the main window 
 until i close the pop-up, when I close tje pop-up the search button should be 
 disabled, so it could not be spammed.
+
+---
+
+## Pop-up test
+
+I will test that when a pop-up is open the player will be unable to interact with the main window
+
+### Test Data To Use
+
+I will attempt the invalid move of clicking on the main window while a pop-up is open
+
+### Expected Test Result
+
+when I click on the main window it should no0t react to the clicks
 
 ---
 
