@@ -89,7 +89,7 @@ The program code is well-commented:
 - [x] Comments accurately describe the **function and behaviour** of the code:
   - [x] Defining the **purpose** of functions / key blocks of code
   - [x] Explaining the **reason** (the '**why**') of key parts of the code
-  - [ ] Defining function **parameters** and/or **return values**
+  - [x] Defining function **parameters** and/or **return values**
 
 ### Program Testing
 

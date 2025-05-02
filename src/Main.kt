@@ -2,15 +2,16 @@
  * =====================================================================
  * Programming Project for NCEA Level 3, Standard 91906
  * ---------------------------------------------------------------------
- * Project Name:   PROJECT NAME HERE
+ * Project Name:   High Stakes
  * Project Author: Cooper Holmes
  * GitHub Repo:    https://github.com/waimea-cholmes2/level-3-programming-assessment
  * ---------------------------------------------------------------------
  * Notes:
- * PROJECT NOTES HERE
+ * High Stakes is a game where the player has rigged a roulette table and is going to bet
+ * all of their money and win big, then on they way to the table they drop all of their chips,
+ * now they need to find all of their chips before the casino closes.
  * =====================================================================
  */
-
 
 
 import com.formdev.flatlaf.FlatDarkLaf
@@ -38,15 +39,16 @@ fun main() {
 class App() {
     // Constants defining any key values
     var time = 1
-    val maxTime = 50
+    val maxTime = 90
     var totalChips = 0
     val totalChipsNeeded = 5
     lateinit var currentLocation: Location
+
     init {
         setUpMap()
     }
 
-    class Location(val name: String, val description: String, var hasChip: Boolean, var searched: Boolean = false){
+    class Location(val name: String, val description: String, var hasChip: Boolean, var searched: Boolean = false) {
         var forward: Location? = null
         var left: Location? = null
         var right: Location? = null
@@ -56,32 +58,122 @@ class App() {
     /**
      * This function is used to setup the map of the game, where it defines each location and defines which locations are next to it.
      */
-    fun setUpMap(){
+    fun setUpMap() {
         // create all the locations
-        val roulette = Location("Roulette Table","you see crowds of people and smoke covering the table, watching the ball roll continuously", false)
-        val blackjack = Location("Blackjack","A green-felt blackjack table with numbered betting spots, a card shoe, dealer chip rack, surrounded by flashing lights and ambient casino noise", false)
-        val elevator = Location("Elevator","A tight and compact space, some nice music though, surely no chip in here", false)
-        val entrance = Location("Entrance","Big glass doors with a red carpet floor, everywhere you see enormous signs pointing to all of the games", false)
-        val slotMachines = Location("Slot Machines","all you can see is machine after machine after machine, each with a person throwing away money", false)
-        val horseRaces = Location("Horse Races","A massive screen completely covers the back wall, displaying all the odds for each horse, then there's just rows and rows of filled seats", true)
-        val frontDesk = Location("Front Desk","A nice lady greets you as you walk close, the marble desk she stands behind shines your reflection right back at you", false)
-        val mainStage = Location("The Main Stage","An enormous stage lit by lights as tall as they ceiling, people are sat, waiting for some kind of convention", false)
-        val bar = Location("The Bar","A man sits behind a bar, cleaning a glass though there is no one around, tables sit empty, lots of room for the chips to have fallen", true)
-        val atms = Location("The ATMS","A small corner in the casino yet it is still well decorated, there are a few people waiting to withdraw more of their hard earned money", false)
-        val office = Location("The Office","You poke your head through a door and find yourself in a waiting room, filled with people who wish to complain about loosing their money", false)
-        val poker = Location("Poker Table","This table is almost silent, still each seat is full and all of the people here give you a hard look as you get near, like they want you to leave ", true)
-        val sportsBetting = Location("Sports Betting","Here you find one bookie behind a desk, he looks at you expectantly, you choose to avoid eye contact", false)
-        val lostAndFound = Location("Lost and Found","You see a small hole in the wall, occupied by a teenager who sits on his phone, not even paying attention", false)
-        val giftShop = Location("The Gift Shop","A nice little store with a few employees who seem to just be cleaning up a mess from a fallen vase", false)
-        val bathroom = Location("The Bathroom","Once inside it is clear that this bathroom has a very nice design, but the people who use it dont really care for cleanliness", false)
-        val upstairsEntrance = Location("The Upstairs Entrance","You walk out of the elevator into a well lit hallway with marble floors, a sign reading lounge sits in front of  you", false)
-        val lounge = Location("The Lounge","Finally you reach a place where no one is gambling, instead everyone is sitting and talking in the well lit room", false)
-        val terrace = Location("The Rooftop Terrace","You walk out into a small garden with nice flowers, and look over the city, now beaming with light", true)
-        val upstairsBathroom = Location("The Upstairs Bathroom","This bathroom is much nicer than the downstairs one, the same design, but is has actually been kept clean", false)
-        val arcade = Location("The Arcade","A large room filled with arcade games from the 80's, you wonder what the purpose of this room is, because no one is here.", false)
-        val janitorsCloset = Location("Janitors Closet","A tight and compact room, filled with cleaning products and toiletries", false)
-        val storageCloset = Location("Storage Closet","A more moderately sized room, filled with food, drinks and frozen goods, but there is a way to the attic", false)
-        val attic = Location("The Attic","Once you've got up the ladder into the attic all you can see are cobwebs and old boxes, you could hear a pin drop", true)
+        val roulette = Location(
+            "Roulette Table",
+            "you see crowds of people and smoke covering the table, watching the ball roll continuously",
+            false
+        )
+        val blackjack = Location(
+            "Blackjack",
+            "A green-felt blackjack table with numbered betting spots, a card shoe, dealer chip rack, surrounded by flashing lights and ambient casino noise",
+            false
+        )
+        val elevator =
+            Location("Elevator", "A tight and compact space, some nice music though, surely no chip in here", false)
+        val entrance = Location(
+            "Entrance",
+            "Big glass doors with a red carpet floor, everywhere you see enormous signs pointing to all of the games",
+            false
+        )
+        val slotMachines = Location(
+            "Slot Machines",
+            "all you can see is machine after machine after machine, each with a person throwing away money",
+            false
+        )
+        val horseRaces = Location(
+            "Horse Races",
+            "A massive screen completely covers the back wall, displaying all the odds for each horse, then there's just rows and rows of filled seats",
+            true
+        )
+        val frontDesk = Location(
+            "Front Desk",
+            "A nice lady greets you as you walk close, the marble desk she stands behind shines your reflection right back at you",
+            false
+        )
+        val mainStage = Location(
+            "The Main Stage",
+            "An enormous stage lit by lights as tall as they ceiling, people are sat, waiting for some kind of convention",
+            false
+        )
+        val bar = Location(
+            "The Bar",
+            "A man sits behind a bar, cleaning a glass though there is no one around, tables sit empty, lots of room for the chips to have fallen",
+            true
+        )
+        val atms = Location(
+            "The ATMS",
+            "A small corner in the casino yet it is still well decorated, there are a few people waiting to withdraw more of their hard earned money",
+            false
+        )
+        val office = Location(
+            "The Office",
+            "You poke your head through a door and find yourself in a waiting room, filled with people who wish to complain about loosing their money",
+            false
+        )
+        val poker = Location(
+            "Poker Table",
+            "This table is almost silent, still each seat is full and all of the people here give you a hard look as you get near, like they want you to leave ",
+            true
+        )
+        val sportsBetting = Location(
+            "Sports Betting",
+            "Here you find one bookie behind a desk, he looks at you expectantly, you choose to avoid eye contact",
+            false
+        )
+        val lostAndFound = Location(
+            "Lost and Found",
+            "You see a small hole in the wall, occupied by a teenager who sits on his phone, not even paying attention",
+            false
+        )
+        val giftShop = Location(
+            "The Gift Shop",
+            "A nice little store with a few employees who seem to just be cleaning up a mess from a fallen vase",
+            false
+        )
+        val bathroom = Location(
+            "The Bathroom",
+            "Once inside it is clear that this bathroom has a very nice design, but the people who use it dont really care for cleanliness",
+            false
+        )
+        val upstairsEntrance = Location(
+            "The Upstairs Entrance",
+            "You walk out of the elevator into a well lit hallway with marble floors, a sign reading lounge sits in front of  you",
+            false
+        )
+        val lounge = Location(
+            "The Lounge",
+            "Finally you reach a place where no one is gambling, instead everyone is sitting and talking in the well lit room",
+            false
+        )
+        val terrace = Location(
+            "The Rooftop Terrace",
+            "You walk out into a small garden with nice flowers, and look over the city, now beaming with light",
+            true
+        )
+        val upstairsBathroom = Location(
+            "The Upstairs Bathroom",
+            "This bathroom is much nicer than the downstairs one, the same design, but is has actually been kept clean",
+            false
+        )
+        val arcade = Location(
+            "The Arcade",
+            "A large room filled with arcade games from the 80's, you wonder what the purpose of this room is, because no one is here.",
+            false
+        )
+        val janitorsCloset =
+            Location("Janitors Closet", "A tight and compact room, filled with cleaning products and toiletries", false)
+        val storageCloset = Location(
+            "Storage Closet",
+            "A more moderately sized room, filled with food, drinks and frozen goods, but there is a way to the attic",
+            false
+        )
+        val attic = Location(
+            "The Attic",
+            "Once you've got up the ladder into the attic all you can see are cobwebs and old boxes, you could hear a pin drop",
+            true
+        )
 
         //define all the locations that the user can move to from each location
         roulette.forward = blackjack
@@ -221,7 +313,6 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
     private lateinit var rightButton: JButton
     private lateinit var timeBackPanel: JPanel
     private lateinit var timeLevelPanel: JPanel
-    private lateinit var timeLabel: JLabel
     private lateinit var resultPopUp: PopUp
 
 
@@ -269,21 +360,21 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         //This shows how many chips have been collected by the player
         chipsLabel = JLabel("Chips Collected: ${app.totalChips}/5")
         chipsLabel.horizontalAlignment = SwingConstants.CENTER
-        chipsLabel.bounds = Rectangle(360, 25, 270, 60)
+        chipsLabel.bounds = Rectangle(360, 25, 300, 60)
         chipsLabel.font = mediumFont
         add(chipsLabel)
         //This is the label above the description of the current location
         descriptionTextLabel = JLabel("Description:")
         descriptionTextLabel.border = BorderFactory.createLineBorder(Color.white)
         descriptionTextLabel.horizontalAlignment = SwingConstants.CENTER
-        descriptionTextLabel.bounds = Rectangle(25,100,280,30)
+        descriptionTextLabel.bounds = Rectangle(25, 100, 280, 30)
         descriptionTextLabel.font = averageFont
         descriptionTextLabel.background = Color.BLACK
         add(descriptionTextLabel)
         //This is the description of the current location
         descriptionLabel = JLabel(app.currentLocation.description)
         descriptionLabel.border = BorderFactory.createLineBorder(Color.white)
-        descriptionLabel.font = smallFont
+        descriptionLabel.font = averageFont
         descriptionLabel.bounds = Rectangle(25, 130, 280, 230)
         add(descriptionLabel)
         //This is the Label above the available locations
@@ -291,7 +382,7 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         availableLocationsTextLabel.font = averageFont
         availableLocationsTextLabel.border = BorderFactory.createLineBorder(Color.WHITE)
         availableLocationsTextLabel.horizontalAlignment = SwingConstants.CENTER
-        availableLocationsTextLabel.bounds = Rectangle(360,100,220,30)
+        availableLocationsTextLabel.bounds = Rectangle(360, 100, 220, 30)
         availableLocationsTextLabel.background = Color.BLACK
         add(availableLocationsTextLabel)
         //This is the label which shows all available locations
@@ -335,10 +426,11 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         rightButton.font = mediumFont
         rightButton.addActionListener(this)     // Handle any clicks
         add(rightButton)
+
         //This is the panel that the level panel slides down
         timeBackPanel = JPanel()
         timeBackPanel.bounds = Rectangle(590, 100, 100, 300)
-        timeBackPanel.border = BorderFactory.createLineBorder((Color.GRAY),7)
+        timeBackPanel.border = BorderFactory.createLineBorder((Color.GRAY), 7)
         timeBackPanel.background = Color.YELLOW
         timeBackPanel.layout = null                // Want layout to be manual
         add(timeBackPanel)
@@ -347,13 +439,6 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         timeLevelPanel.bounds = Rectangle(0, 0, 100, 0)
         timeLevelPanel.background = Color.GRAY
         timeBackPanel.add(timeLevelPanel)
-
-        timeLabel = JLabel("TIME")
-        timeLabel.bounds = Rectangle(590,100,100,100)
-        timeLabel.horizontalAlignment = SwingConstants.CENTER
-        timeLabel.font = averageFont
-        timeLabel.foreground = Color.BLACK
-        add(timeLabel)
     }
 
 
@@ -395,15 +480,15 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
         availableLocationsLabel.text = availableLocationsText
 
         //Check if the player has died(ran out of time), the minus 7 is to accomodate for the thickness of the border on the backpanel
-        if (timeLevelPanel.height >= timeBackPanel.height-7) {
+        if (timeLevelPanel.height >= timeBackPanel.height - 7) {
             //if the player is dead display the won message
             this.isVisible = false
-            resultPopUp = PopUp(app, foundChip = false, true)
+            resultPopUp = PopUp(foundChip = false, true)
             resultPopUp.isVisible = true
         }
         //Check if the player has won the game(collect all the chips and made it back to the roulette table)
         if (app.totalChips == app.totalChipsNeeded && app.currentLocation.name == "Roulette Table") {
-            resultPopUp = PopUp(app, foundChip = false, lost = false, true)
+            resultPopUp = PopUp(foundChip = false, lost = false, true)
             resultPopUp.isVisible = true
             exitProcess(0)
         }
@@ -429,24 +514,34 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
     override fun actionPerformed(e: ActionEvent?) {
         when (e?.source) {
             //Perform moves based on which movement button is pressed, passing the direction to the move function
-            forwardButton -> {app.move("forward")
-                updateView() }
-            backButton -> {app.move("back")
-                updateView() }
+            forwardButton -> {
+                app.move("forward")
+                updateView()
+            }
+
+            backButton -> {
+                app.move("back")
+                updateView()
+            }
+
             leftButton -> {
                 app.move("left")
-                updateView() }
-            rightButton -> {app.move("right")
-                updateView() }
+                updateView()
+            }
+
+            rightButton -> {
+                app.move("right")
+                updateView()
+            }
             //Opening a pop-up to say whether a chip was found
             searchButton -> {
                 val foundChip = app.currentLocation.hasChip
                 app.currentLocation.searched = true
-                resultPopUp = PopUp(app, foundChip)
+                resultPopUp = PopUp(foundChip)
                 resultPopUp.isVisible = true
 
                 if (foundChip)
-                app.totalChips++
+                    app.totalChips++
                 app.currentLocation.hasChip = false
                 updateView()
 
@@ -467,7 +562,8 @@ class MainWindow(val app: App) : JFrame(), ActionListener {
  * the value for the class are passed in when the pop-up is called and are used to determine what is
  * displayed on the pop-up
  */
-class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = false, val winner: Boolean = false) : JDialog() {
+class PopUp(val foundChip: Boolean = false, val lost: Boolean = false, val winner: Boolean = false) :
+    JDialog() {
     /**
      * Configure the UI
      */
@@ -510,7 +606,8 @@ class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
         noFoundChipMessage.verticalAlignment = SwingConstants.TOP
         noFoundChipMessage.font = baseFont
 
-        val lostMessage = JLabel("<html> Oh too bad! You took too long to find all of the chips and someone finally realised the ball kept landing on 17.")
+        val lostMessage =
+            JLabel("<html> Oh too bad! You took too long to find all of the chips and one of the bouncers kicked you out when they closed.")
         lostMessage.bounds = Rectangle(25, 25, 350, 150)
         lostMessage.verticalAlignment = SwingConstants.TOP
         lostMessage.font = baseFont
@@ -522,16 +619,13 @@ class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
 
         val doneButton = JButton("Done")
         doneButton.bounds = Rectangle(150, 130, 100, 40)
-        doneButton.addActionListener{ exitProcess(0) }
+        doneButton.addActionListener { exitProcess(0) }
 
-         // Closes the pop-up
+        // Closes the pop-up
 
         val closeButton = JButton("Close")
         closeButton.bounds = Rectangle(150, 130, 100, 40)
         closeButton.addActionListener { this.isVisible = false } // Closes the pop-up
-
-
-
 
 
         //deciding what will be displayed on the pop-up
@@ -560,7 +654,6 @@ class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
         }
 
 
-
     }
 
 }
@@ -569,7 +662,7 @@ class PopUp(val app: App, val foundChip: Boolean = false, val lost: Boolean = fa
  * This class is used to display the Instructions for the player at the start of the game and whenever
  * the player presses the help button
  */
-class InstructionsPopUp: JDialog() {
+class InstructionsPopUp : JDialog() {
     /**
      * Configure the UI
      */
@@ -584,7 +677,7 @@ class InstructionsPopUp: JDialog() {
      */
     private fun configureWindow() {
         title = "Instructions"
-        contentPane.preferredSize = Dimension(400, 420)
+        contentPane.preferredSize = Dimension(400, 440)
         isResizable = false
         isModal = true
         layout = null
@@ -599,24 +692,24 @@ class InstructionsPopUp: JDialog() {
 
         // Adding <html> to the label text allows it to wrap
         //Adding all the messages to the pop-up
-        val instructions = JLabel("<html> <p><b>BACKSTORY:</b><br>\n" +
-                "    You've rigged the roulette table using magnets to always land on 17... but tripped while carrying your chips! Now they've scattered across the casino.</p>\n" +
-                "    \n" +
-                "    <p><b>OBJECTIVE:</b><br>\n" +
-                "    • Find all 5 lost chips before the casino closes<br>\n" +
-                "    • Return to the roulette table to win your prize</p>\n" +
-                "    \n" +
-                "    <p><b>CONTROLS:</b><br>\n" +
-                "    ↑↓←→ Move between areas(Moving takes time)<br>\n" +
-                "    [SEARCH] Search the room for chips(Searching takes time)<br>\n" +
-                "    [TIME BAR] Shows time left to find the chips</p>")
+        val instructions = JLabel(
+            "<html> <p><b>BACKSTORY:</b><br>" +
+                    "    You've rigged the roulette table using magnets to always land on 17... but tripped while carrying your chips! Now they've scattered across the casino.</p>" +
+                    "    <p><b>OBJECTIVE:</b><br>" +
+                    "    • Find all 5 lost chips before the casino closes<br>" +
+                    "    • Return to the roulette table to win your prize</p>" +
+                    "    <p><b>CONTROLS:</b><br>" +
+                    "    ↑↓←→ Move between areas(Moving takes time)<br>" +
+                    "    [SEARCH] Search the room for chips(Searching takes time)<br>" +
+                    "    [TIME BAR] The yellow bar on the right shows time left to find the chips</p>"
+        )
         instructions.bounds = Rectangle(25, 25, 350, 375)
         instructions.verticalAlignment = SwingConstants.TOP
         instructions.font = baseFont
         add(instructions)
 
         val closeButton = JButton("Close")
-        closeButton.bounds = Rectangle(150, 350, 100, 40)
+        closeButton.bounds = Rectangle(150, 370, 100, 40)
         closeButton.addActionListener { this.isVisible = false } // Closes the pop-up
         add(closeButton)
     }
